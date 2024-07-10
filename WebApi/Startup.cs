@@ -4,7 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Text.Json.Serialization;
+using WebApi.Controllers;
+using WebApi.Servicios;
 
 namespace WebApi
 {
@@ -12,8 +16,18 @@ namespace WebApi
     {
         public Startup(IConfiguration configuration)
         {
+            var autoresController = AutoresController(new ApplicationDbContext(null), new ServicioA(new Logger()));
+           
+            
+            autoresController.Get();
             Configuration = configuration;
         }
+
+        private object AutoresController(ApplicationDbContext applicationDbContext, ServicioA servicioA)
+        {
+            throw new NotImplementedException();
+        }
+
         public IConfiguration Configuration { get; }
 
         public void ConfiugureServices(IServiceCollection services)
