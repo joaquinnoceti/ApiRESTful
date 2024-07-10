@@ -18,14 +18,14 @@ namespace WebApi.Controllers
             this.context = context;
         }
         [HttpGet]
-        //public async Task<ActionResult<List<Autor>>> Get()
-        //{
-        //    return await context.Autors.Include(x => x.Libros).ToListAsync();
-        //}
-        public List<Autor> GetListaAutores()
+        public async Task<ActionResult<List<Autor>>> Get()
         {
-            return context.Autors.Include(x => x.Libros).ToList();
+            return await context.Autors.Include(x => x.Libros).ToListAsync();
         }
+        //public List<Autor> GetListaAutores()
+        //{
+        //    return context.Autors.Include(x => x.Libros).ToList();
+        //}
 
 
         [HttpGet("primero")]
@@ -45,7 +45,7 @@ namespace WebApi.Controllers
             return autor;
         }
         [HttpGet("{nombre}/{param2?}")]   ///PARAMETRO 2 OPCIONAL
-        public async Task<ActionResult<Autor>> AutorxNombre(string nombre,int param2)
+        public async Task<ActionResult<Autor>> AutorxNombre([FromHeader]string nombre,[FromQuery]int param2)
         {
             var autor = await context.Autors.FirstOrDefaultAsync(x => x.Nombre.Contains(nombre));
             if (autor == null)
@@ -55,7 +55,7 @@ namespace WebApi.Controllers
             return autor;
         }
         [HttpPost]
-        public async Task<ActionResult> Post(Autor autor)
+        public async Task<ActionResult> Post([FromBody] Autor autor)
         {
             context.Add(autor);
             await context.SaveChangesAsync();
