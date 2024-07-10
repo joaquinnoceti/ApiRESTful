@@ -7,7 +7,7 @@ namespace WebApi.Entidades
     public class Autor : IValidatableObject
     {
         public int ID { get; set; }
-        [Required(ErrorMessage = "El campo nombre es obligatorio.")] //(ErrorMessage = "El campo {0} es obligatorio.")
+        [Required(ErrorMessage = "El campo nombre es obligatorio.")] //(ErrorMessage = "El campo {0} es obligatorio.") --VALIDACIONES POR ATRIBUTO
         [StringLength(maximumLength: 10, ErrorMessage = "El campo {0} debe ser menor a {1} caracteres")]
    //     [ValidacionesNombre] //validacion personalizada x atributo
         public string Nombre { get; set; }

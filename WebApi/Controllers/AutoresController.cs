@@ -57,9 +57,19 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Autor autor)
         {
-            context.Add(autor);
-            await context.SaveChangesAsync();
-            return Ok();
+            var ExisteNombre = await context.Autors.AnyAsync(x => x.Nombre == autor.Nombre);
+
+            if (ExisteNombre)
+            {
+                return BadRequest("Nombre de autor REPETIDO");
+            }
+            else
+            {
+                context.Add(autor);
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+            
         }
 
         [HttpPut("{id:int}")]//api/autores/1(id)
