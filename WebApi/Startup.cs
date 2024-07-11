@@ -16,16 +16,8 @@ namespace WebApi
     {
         public Startup(IConfiguration configuration)
         {
-            var autoresController = AutoresController(new ApplicationDbContext(null), new ServicioA(new Logger()));
-           
-            
-            autoresController.Get();
-            Configuration = configuration;
-        }
 
-        private object AutoresController(ApplicationDbContext applicationDbContext, ServicioA servicioA)
-        {
-            throw new NotImplementedException();
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -37,6 +29,8 @@ namespace WebApi
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+
+            services.AddTransient<IServicio, ServicioA>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();

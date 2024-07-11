@@ -19,12 +19,12 @@ namespace WebApi.Servicios
         {
             throw new System.NotImplementedException();
         }
-        public class ServicioB : IServicio
+    }
+    public class ServicioB : IServicio
+    {
+        public void RealizarTarea()
         {
-            public void RealizarTarea()
-            {
-                throw new System.NotImplementedException();
-            }
-
+            throw new System.NotImplementedException();
         }
     }
+}

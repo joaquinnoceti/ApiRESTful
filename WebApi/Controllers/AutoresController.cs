@@ -23,12 +23,9 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Autor>>> Get()
         {
+            servicio.RealizarTarea();
             return await context.Autors.Include(x => x.Libros).ToListAsync();
         }
-        //public List<Autor> GetListaAutores()
-        //{
-        //    return context.Autors.Include(x => x.Libros).ToList();
-        //}
 
 
         [HttpGet("primero")]
