@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,15 +18,18 @@ namespace WebApi.Controllers
         private readonly ServicioTransient servicioTransient;
         private readonly ServicioScoped servicioScoped;
         private readonly ServicioSingleton servicioSingleton;
+        private readonly ILogger<AutoresController> logger;
 
         public AutoresController(ApplicationDbContext context, IServicio servicio,
-            ServicioTransient servicioTransient, ServicioScoped servicioScoped, ServicioSingleton servicioSingleton)
+            ServicioTransient servicioTransient, ServicioScoped servicioScoped, ServicioSingleton servicioSingleton,
+            ILogger<AutoresController> logger)
         {
             this.context = context;
             this.servicio = servicio;
             this.servicioTransient = servicioTransient;
             this.servicioScoped = servicioScoped;
             this.servicioSingleton = servicioSingleton;
+            this.logger = logger;
         }
 
         [HttpGet("GUID")]
@@ -48,7 +52,8 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Autor>>> Get()
         {
-            servicio.RealizarTarea();
+            logger.LogInformation("Obteniendo Autores...");
+            //servicio.RealizarTarea();
             return await context.Autors.Include(x => x.Libros).ToListAsync();
         }
 
@@ -56,6 +61,8 @@ namespace WebApi.Controllers
         [HttpGet("primero")]
         public async Task<ActionResult<Autor>> PrimerAutor()
         {
+            logger.LogInformation("Obteniendo Autores...");
+
             return await context.Autors.FirstOrDefaultAsync();
         }
 
