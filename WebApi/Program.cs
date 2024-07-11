@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Logging;
 using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ startup.ConfiugureServices(builder.Services);
 
 var app = builder.Build();
 
-startup.Configure(app,app.Environment); 
+var ServicioLogger = (ILogger<Startup>)app.Services.GetService(typeof(ILogger<Startup>));   
+startup.Configure(app,app.Environment, ServicioLogger); 
 
 app.Run();
