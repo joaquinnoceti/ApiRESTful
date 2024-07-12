@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Text.Json.Serialization;
 using WebApi.Controllers;
+using WebApi.Filtros;
 using WebApi.Servicios;
 
 namespace WebApi
@@ -38,6 +39,8 @@ namespace WebApi
             services.AddTransient<ServicioTransient>();
             services.AddScoped<ServicioScoped>();
             services.AddSingleton<ServicioSingleton>();
+
+            services.AddTransient<FiltroDeAccion>();
 
             services.AddResponseCaching();//servicio de cache
 

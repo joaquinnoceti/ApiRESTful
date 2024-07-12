@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Entidades;
+using WebApi.Filtros;
 using WebApi.Servicios;
 
 namespace WebApi.Controllers
@@ -37,6 +38,7 @@ namespace WebApi.Controllers
         [HttpGet("GUID")]
         [ResponseCache(Duration = 10)]  //retiene la informacion en cache x 10 segundos, optimiza recursos al no consultar otra vez la BBDD
         [Authorize]
+        [ServiceFilter(typeof(FiltroDeAccion))]
         public ActionResult ObtenerGUIDS()
         {
             return Ok(new
@@ -63,6 +65,8 @@ namespace WebApi.Controllers
 
 
         [HttpGet("primero")]
+        [ServiceFilter(typeof(FiltroDeAccion))]
+
         public async Task<ActionResult<Autor>> PrimerAutor()
         {
             logger.LogInformation("Obteniendo Autores...");
