@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/autores")]
+  //  [Authorize] 
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -33,6 +35,8 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("GUID")]
+        [ResponseCache(Duration = 10)]  //retiene la informacion en cache x 10 segundos, optimiza recursos al no consultar otra vez la BBDD
+        [Authorize]
         public ActionResult ObtenerGUIDS()
         {
             return Ok(new

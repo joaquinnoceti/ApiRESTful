@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,9 @@ namespace WebApi
             services.AddScoped<ServicioScoped>();
             services.AddSingleton<ServicioSingleton>();
 
+            services.AddResponseCaching();//servicio de cache
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
@@ -85,6 +89,8 @@ namespace WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseResponseCaching();           //config para cache
 
             app.UseAuthorization();
 
