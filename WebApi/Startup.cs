@@ -28,7 +28,10 @@ namespace WebApi
 
         public void ConfiugureServices(IServiceCollection services)
         {
-            services.AddControllers().AddJsonOptions(x => 
+            services.AddControllers(opciones =>
+            {
+                opciones.Filters.Add(typeof(FiltroDeExcepcion));
+            }).AddJsonOptions(x => 
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             services.AddDbContext<ApplicationDbContext>(options =>
