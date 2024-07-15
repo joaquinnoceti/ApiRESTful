@@ -2,9 +2,9 @@
 
 namespace WebApi.DTOs
 {
-    public class AutorDTO
+    public class AutorAltaDTO
     {
-        public int ID { get; set; }
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Nombre { get; set; }
     }
 }

@@ -8,7 +8,8 @@ namespace WebApi.Utilidades
     {
         public AutomapperProfiles()
         {
-            CreateMap<AutorDTO, Autor>();
+            CreateMap<AutorAltaDTO, Autor>();
+            CreateMap<Autor, AutorDTO>();
         }
     }
 }
