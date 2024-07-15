@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.DTOs;
 using WebApi.Entidades;
 using WebApi.Filtros;
 
@@ -15,12 +17,12 @@ namespace WebApi.Controllers
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDbContext context;
+        private readonly IMapper mapper;
 
-
-        public AutoresController(ApplicationDbContext context)
+        public AutoresController(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
-
+            this.mapper = mapper;
         }
 
 
@@ -44,27 +46,28 @@ namespace WebApi.Controllers
             return autor;
         }
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Autor autor)
+        public async Task<ActionResult> Post([FromBody] AutorDTO autorDTO)
         {
-            var ExisteNombre = await context.Autors.AnyAsync(x => x.Nombre == autor.Nombre);
+            var ExisteNombre = await context.Autors.AnyAsync(x => x.Nombre == autorDTO.Nombre);
 
             if (ExisteNombre)
             {
                 return BadRequest("Nombre de autor REPETIDO");
             }
-            else
-            {
-                context.Add(autor);
-                await context.SaveChangesAsync();
-                return Ok();
-            }
-            
+
+            var autor = mapper.Map<Autor>(autorDTO);
+
+            context.Add(autor);
+            await context.SaveChangesAsync();
+            return Ok();
+
+
         }
 
         [HttpPut("{id:int}")]//api/autores/1(id)
-        public async Task<ActionResult> Put(Autor autor,int id)
+        public async Task<ActionResult> Put(Autor autor, int id)
         {
-            if(autor.ID != id)
+            if (autor.ID != id)
             {
                 return BadRequest("ID invalido");
             }
@@ -85,12 +88,12 @@ namespace WebApi.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await context.Autors.AnyAsync(x => x.ID == id);
-            
+
             if (!existe)
             {
                 return NotFound();
             }
-            context.Remove(new Autor {ID = id});
+            context.Remove(new Autor { ID = id });
             await context.SaveChangesAsync();
             return Ok();
         }
