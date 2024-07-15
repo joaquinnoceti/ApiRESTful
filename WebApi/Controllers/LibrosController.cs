@@ -17,26 +17,26 @@ namespace WebApi.Controllers
             this.context = context;
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Libro>> Get(int id)
-        {
-            return await context.Libros.Include(x => x.autor).FirstOrDefaultAsync(x => x.ID == id);
-        }
+        //[HttpGet("{id:int}")]
+        //public async Task<ActionResult<Libro>> Get(int id)
+        //{
+        //    return await context.Libros.Include(x => x.autor).FirstOrDefaultAsync(x => x.ID == id);
+        //}
 
-        [HttpPost]
-        public async Task<ActionResult> Post(Libro libro)
-        {
+        //[HttpPost]
+        //public async Task<ActionResult> Post(Libro libro)
+        //{
 
-            var ExisteAutor = await context.Autors.AnyAsync(x => x.ID == libro.AutorID);
-            if (!ExisteAutor)
-            {
-                return BadRequest($"El autor con id {libro.AutorID} no existe");
-            }
+        //    var ExisteAutor = await context.Autors.AnyAsync(x => x.ID == libro.AutorID);
+        //    if (!ExisteAutor)
+        //    {
+        //        return BadRequest($"El autor con id {libro.AutorID} no existe");
+        //    }
 
-            context.Add(libro);
-            await context.SaveChangesAsync();
-            return Ok(); 
-        }
+        //    context.Add(libro);
+        //    await context.SaveChangesAsync();
+        //    return Ok(); 
+        //}
 
 
     }

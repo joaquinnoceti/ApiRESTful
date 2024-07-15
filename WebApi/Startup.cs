@@ -12,7 +12,6 @@ using System.IO;
 using System.Text.Json.Serialization;
 using WebApi.Controllers;
 using WebApi.Filtros;
-using WebApi.Servicios;
 
 namespace WebApi
 {
@@ -37,17 +36,7 @@ namespace WebApi
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
 
-            services.AddTransient<IServicio, ServicioA>();
 
-            services.AddTransient<ServicioTransient>();
-            services.AddScoped<ServicioScoped>();
-            services.AddSingleton<ServicioSingleton>();
-
-            services.AddTransient<FiltroDeAccion>();
-
-            services.AddHostedService<EscribirEnArchivo>();
-
-            services.AddResponseCaching();//servicio de cache
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
@@ -80,13 +69,7 @@ namespace WebApi
             });
 
 
-            app.Map("/ruta1", app =>
-            {
-                app.Run(async contexto =>
-                {
-                    await contexto.Response.WriteAsync("Intercepcion en pipeline");
-                });
-            });
+
 
             if (env.IsDevelopment())
             {
@@ -98,7 +81,6 @@ namespace WebApi
 
             app.UseRouting();
 
-            app.UseResponseCaching();           //config para cache
 
             app.UseAuthorization();
 
