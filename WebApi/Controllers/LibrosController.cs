@@ -21,10 +21,10 @@ namespace WebApi.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "ObtenerLibro")]
         public async Task<ActionResult<LibroDTOConAutores>> Get(int id)
         {
-         //   var libro = await context.Libros.Include(x => x.Comentarios).FirstOrDefaultAsync(x => x.ID == id);
+            //   var libro = await context.Libros.Include(x => x.Comentarios).FirstOrDefaultAsync(x => x.ID == id);
             var libro = await context.Libros
                 .Include(libroDB => libroDB.AutoresLibros)
                 .ThenInclude(autorLibroDB => autorLibroDB.Autor)
@@ -55,7 +55,36 @@ namespace WebApi.Controllers
 
             var libro = mapper.Map<Libro>(libroAltaDTO);
 
-            if(libro.AutoresLibros != null)
+            AsignarOrdenAutores(libro);
+
+            context.Add(libro);
+            await context.SaveChangesAsync();
+
+            var libroDTO = mapper.Map<LibroDTO>(libro);
+
+            return CreatedAtRoute("ObtenerLibro", new { id = libro.ID }, libroDTO);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int ID, LibroAltaDTO libroAltaDTO)
+        {
+            var libroDB = await context.Libros
+                .Include(x => x.AutoresLibros)
+                .FirstOrDefaultAsync(x => x.ID == ID);
+
+            if (libroDB == null) { return NotFound(); }
+
+            libroDB = mapper.Map(libroAltaDTO, libroDB);
+
+            AsignarOrdenAutores(libroDB);
+
+            await context.SaveChangesAsync();
+            return NoContent();
+        } 
+
+        private void AsignarOrdenAutores(Libro libro)
+        {
+            if (libro.AutoresLibros != null)
             {
                 for (int i = 0; i < libro.AutoresLibros.Count; i++)
                 {
@@ -63,12 +92,6 @@ namespace WebApi.Controllers
                 }
 
             }
-
-            context.Add(libro);
-            await context.SaveChangesAsync();
-            return Ok();
         }
-
-
     }
 }

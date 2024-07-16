@@ -44,7 +44,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name ="ObtenerAutor")]
         public async Task<ActionResult<AutorDTOConLibros>> AutorxID(int id)
         {
             var autor = await context.Autors
@@ -72,18 +72,16 @@ namespace WebApi.Controllers
 
             context.Add(autor);
             await context.SaveChangesAsync();
-            return Ok();
 
+            var AutorDTO = mapper.Map<AutorDTO>(autor);
+
+            return CreatedAtRoute("ObtenerAutor", new {id=autor.ID}, AutorDTO);
 
         }
 
         [HttpPut("{id:int}")]//api/autores/1(id)
-        public async Task<ActionResult> Put(Autor autor, int id)
+        public async Task<ActionResult> Put(AutorAltaDTO autorDTO, int id)
         {
-            if (autor.ID != id)
-            {
-                return BadRequest("ID invalido");
-            }
 
             var existe = await context.Autors.AnyAsync(x => x.ID == id);
 
@@ -92,9 +90,13 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
+            var autor = mapper.Map<Autor>(autorDTO);
+            autor.ID = id;
+
             context.Update(autor);
             await context.SaveChangesAsync();
-            return Ok();
+            
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
