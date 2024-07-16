@@ -32,14 +32,32 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(LibroAltaDTO libroAltaDTO)
         {
+            if (libroAltaDTO.AutoresID == null)
+            {
+                return BadRequest("Es necesario agregar un Autor al libro.");
+            }
 
-            //var ExisteAutor = await context.Autors.AnyAsync(x => x.ID == libro.AutorID);
-            //if (!ExisteAutor)
-            //{
-            //    return BadRequest($"El autor con id {libro.AutorID} no existe");
-            //}
+
+            var IDAutores = await context.Autors
+                .Where(x => libroAltaDTO.AutoresID.Contains(x.ID)).Select(x => x.ID).ToListAsync();
+
+            if (IDAutores.Count != libroAltaDTO.AutoresID.Count)
+            {
+                return BadRequest("Se ingreso un id de autor invalido.");
+            }
+
 
             var libro = mapper.Map<Libro>(libroAltaDTO);
+
+            if(libro.AutoresLibros != null)
+            {
+                for (int i = 0; i < libro.AutoresLibros.Count; i++)
+                {
+                    libro.AutoresLibros[i].Orden = i;
+                }
+
+            }
+
             context.Add(libro);
             await context.SaveChangesAsync();
             return Ok();

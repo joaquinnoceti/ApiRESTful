@@ -10,5 +10,6 @@ namespace WebApi.Entidades
         [Required]
         public string Titulo { get; set; }
         public List<Comentarios> Comentarios { get; set; }
+        public List<AutorLibro> AutoresLibros { get; set; }
     }
 }
