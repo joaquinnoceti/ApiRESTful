@@ -5,28 +5,49 @@ using WebApi.Entidades;
 
 namespace WebApi.Utilidades
 {
-    public class AutomapperProfiles: Profile
+    public class AutomapperProfiles : Profile
     {
         public AutomapperProfiles()
         {
             CreateMap<AutorAltaDTO, Autor>();
             CreateMap<Autor, AutorDTO>();
+            CreateMap<Autor, AutorDTOConLibros>()
+                .ForMember(autorDTO => autorDTO.Libros, opciones => opciones.MapFrom(MapAutorDTOLibros));
             CreateMap<LibroAltaDTO, Libro>()
                 .ForMember(libro => libro.AutoresLibros, opciones => opciones.MapFrom(MapAutoresLibros));
-            CreateMap<Libro, LibroDTO>()
+            CreateMap<Libro, LibroDTO>();
+            CreateMap<Libro, LibroDTOConAutores>()
                 .ForMember(libroDTO => libroDTO.Autores, opciones => opciones.MapFrom(MapLibroDTOAutores));
             CreateMap<ComentarioAltaDTO, Comentarios>();
-            CreateMap<Comentarios,ComentarioDTO>();
-            
+            CreateMap<Comentarios, ComentarioDTO>();
 
         }
-        private List<AutorDTO> MapLibroDTOAutores(Libro libro,LibroDTO libroDTO)
+
+        private List<LibroDTO> MapAutorDTOLibros(Autor autor, AutorDTO autorDTO)
+        {
+            var result = new List<LibroDTO>();
+
+            if (autor.AutoresLibros == null) { return result; }
+
+            foreach(var autorLibro in autor.AutoresLibros)
+            {
+                result.Add(new LibroDTO()
+                {
+                    ID= autorLibro.LibroID,
+                    Titulo = autorLibro.Libro.Titulo
+                });
+            }
+
+            return result;
+        }
+
+        private List<AutorDTO> MapLibroDTOAutores(Libro libro, LibroDTO libroDTO)
         {
             var result = new List<AutorDTO>();
 
             if (libro.AutoresLibros == null) { return result; }
 
-            foreach(var autorlibro in libro.AutoresLibros)
+            foreach (var autorlibro in libro.AutoresLibros)
             {
                 result.Add(new AutorDTO()
                 {
@@ -41,7 +62,7 @@ namespace WebApi.Utilidades
         {
             var result = new List<AutorLibro>();
 
-            if(libroAltaDTO.AutoresID == null)
+            if (libroAltaDTO.AutoresID == null)
             {
                 return result;
             }
