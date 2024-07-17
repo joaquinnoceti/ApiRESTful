@@ -110,7 +110,7 @@ namespace WebApi.Controllers
             }
             context.Remove(new Autor { ID = id });
             await context.SaveChangesAsync();
-            return Ok();
+            return NoContent();
         }
     }
 }
