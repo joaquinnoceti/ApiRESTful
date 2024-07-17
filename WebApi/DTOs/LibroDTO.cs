@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WebApi.DTOs
 {
@@ -6,6 +7,8 @@ namespace WebApi.DTOs
     {
         public int ID { get; set; }
         public string Titulo { get; set; }
+        public DateTime FechaPublicacion { get; set; }
+
         // public List<ComentarioDTO> Comentarios { get; set; }
     }
 }

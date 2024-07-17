@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -66,11 +67,11 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int ID, LibroAltaDTO libroAltaDTO)
+        public async Task<ActionResult> Put(int id, LibroAltaDTO libroAltaDTO)
         {
             var libroDB = await context.Libros
                 .Include(x => x.AutoresLibros)
-                .FirstOrDefaultAsync(x => x.ID == ID);
+                .FirstOrDefaultAsync(x => x.ID == id);
 
             if (libroDB == null) { return NotFound(); }
 
@@ -80,7 +81,7 @@ namespace WebApi.Controllers
 
             await context.SaveChangesAsync();
             return NoContent();
-        } 
+        }
 
         private void AsignarOrdenAutores(Libro libro)
         {
@@ -93,5 +94,38 @@ namespace WebApi.Controllers
 
             }
         }
+
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<LibroPatchDTO> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var Libro = await context.Libros.FirstOrDefaultAsync(x => x.ID == id);
+
+            if (Libro == null)
+            {
+                return NotFound();
+            }
+
+            var LibroDTO = mapper.Map<LibroPatchDTO>(Libro);
+
+            patchDocument.ApplyTo(LibroDTO, ModelState);
+            mapper.Map(LibroDTO, Libro);
+            var Valido = TryValidateModel(LibroDTO);
+
+            if (!Valido)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await context.SaveChangesAsync();
+            return NoContent();
+
+        }
+
+
     }
 }
