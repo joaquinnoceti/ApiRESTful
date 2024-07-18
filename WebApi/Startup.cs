@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.Text;
@@ -33,7 +34,7 @@ namespace WebApi
             services.AddControllers(opciones =>
             {
                 opciones.Filters.Add(typeof(FiltroDeExcepcion));
-            }).AddJsonOptions(x => 
+            }).AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -55,13 +56,39 @@ namespace WebApi
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorazation",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+
+                        },
+                        new string[]{}
+                    }
+                });
+            });
 
             services.AddAutoMapper(typeof(Startup));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();   
+                .AddDefaultTokenProviders();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
@@ -69,7 +96,7 @@ namespace WebApi
 
             app.Use(async (contexto, siguiente) =>
             {
-                using( var ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
                     var CuerpoOriginalRespuesta = contexto.Response.Body;
                     contexto.Response.Body = ms;
@@ -78,7 +105,7 @@ namespace WebApi
 
                     ms.Seek(0, SeekOrigin.Begin);
                     string Respuesta = new StreamReader(ms).ReadToEnd();
-                    ms.Seek(0,SeekOrigin.Begin);
+                    ms.Seek(0, SeekOrigin.Begin);
 
                     await ms.CopyToAsync(CuerpoOriginalRespuesta);
                     contexto.Response.Body = CuerpoOriginalRespuesta;
