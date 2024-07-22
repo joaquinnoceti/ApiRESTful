@@ -28,7 +28,7 @@ namespace WebApi.Controllers
 
 
 
-        [HttpGet]
+        [HttpGet(Name ="ObtenerAutores")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<List<AutorDTO>>> Get()
         {
@@ -37,7 +37,7 @@ namespace WebApi.Controllers
             return mapper.Map<List<AutorDTO>>(autores);
         }
 
-        [HttpGet("{nombre}")]
+        [HttpGet("{nombre}",Name ="ObtenerAutorNombre")]
         public async Task<ActionResult<List<AutorDTO>>> AutorxID(string nombre)
         {
             var autores = await context.Autors.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
@@ -46,7 +46,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpGet("{id:int}", Name ="ObtenerAutor")]
+        [HttpGet("{id:int}", Name ="ObtenerAutorID")]
         public async Task<ActionResult<AutorDTOConLibros>> AutorxID(int id)
         {
             var autor = await context.Autors
@@ -60,7 +60,7 @@ namespace WebApi.Controllers
             }
             return mapper.Map<AutorDTOConLibros>(autor);
         }
-        [HttpPost]
+        [HttpPost(Name ="CrearAutor")]
         public async Task<ActionResult> Post([FromBody] AutorAltaDTO autorDTO)
         {
             var ExisteNombre = await context.Autors.AnyAsync(x => x.Nombre == autorDTO.Nombre);
@@ -81,7 +81,7 @@ namespace WebApi.Controllers
 
         }
 
-        [HttpPut("{id:int}")]//api/autores/1(id)
+        [HttpPut("{id:int}",Name = "ActualizarAutor")]//api/autores/1(id)
         public async Task<ActionResult> Put(AutorAltaDTO autorDTO, int id)
         {
 
@@ -101,7 +101,7 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}",Name ="EliminarAutor")]
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await context.Autors.AnyAsync(x => x.ID == id);

@@ -27,7 +27,7 @@ namespace WebApi.Controllers
             this.userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet(Name ="ObtenerComentarios")]
         public async Task<ActionResult<List<ComentarioDTO>>> Get(int LibroID)
         {
             var ExisteLibro = await context.Libros.AnyAsync(x => x.ID == LibroID);
@@ -39,7 +39,7 @@ namespace WebApi.Controllers
             return mapper.Map<List<ComentarioDTO>>(comentarios);
         }
 
-        [HttpGet("{id:int}",Name ="ObtenerComentario")]
+        [HttpGet("{id:int}",Name ="ObtenerComentarioID")]
         public async Task<ActionResult<ComentarioDTO>> GetById(int ID)
         {
             var comentario = await context.Comentarios.FirstOrDefaultAsync(x => x.ID == ID);
@@ -49,7 +49,7 @@ namespace WebApi.Controllers
             return mapper.Map<ComentarioDTO>(comentario);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "PostearComentario")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Post(int LibroID, ComentarioAltaDTO comentarioAltaDTO)
         {
@@ -75,7 +75,7 @@ namespace WebApi.Controllers
         }
 
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int}",Name = "EditarComentario")]
         public async Task<ActionResult> Put(ComentarioAltaDTO comentarioAltaDTO, int id, int LibroID)
         {
             var ExisteLibro = await context.Libros.AnyAsync(x => x.ID == LibroID);
