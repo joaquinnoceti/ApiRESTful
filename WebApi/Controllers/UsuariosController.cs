@@ -43,7 +43,7 @@ namespace WebApi.Controllers
             }
             else
             {
-                return ConstruirToken(credencialesUsuario);
+                return await ConstruirToken(credencialesUsuario);
             }
         }
 
@@ -59,14 +59,14 @@ namespace WebApi.Controllers
             }
             else
             {
-                return ConstruirToken(credencialesUsuario);
+                return await ConstruirToken(credencialesUsuario);
             }
 
         }
 
-        [HttpGet]
+        [HttpGet("RenovarToken")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public ActionResult<RespuestaAutenticacion> RenovarToken()
+        public async Task<ActionResult<RespuestaAutenticacion>> RenovarToken()
         {
             var emailClaim = HttpContext.User.Claims.Where(claim => claim.Type == "email").FirstOrDefault();
             var email = emailClaim.Value;
@@ -74,16 +74,20 @@ namespace WebApi.Controllers
             {
                 Email = email
             };
-            return ConstruirToken(credencialesUsuario);
+            return await ConstruirToken(credencialesUsuario);
         }
 
 
-        private RespuestaAutenticacion ConstruirToken(CredencialesUsuario credencialesUsuario)
+        private async Task<RespuestaAutenticacion> ConstruirToken(CredencialesUsuario credencialesUsuario)
         {
             var claims = new List<Claim>()
             {
                 new Claim("email", credencialesUsuario.Email),
             };
+
+            var usuario = await userManager.FindByEmailAsync(credencialesUsuario.Email);
+            var claimsDB = await userManager.GetClaimsAsync(usuario);
+            claims.AddRange(claimsDB);
 
             var llave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["llavejwt"]));
             var creds = new SigningCredentials(llave, SecurityAlgorithms.HmacSha256);
@@ -98,10 +102,21 @@ namespace WebApi.Controllers
                 Expiracion = expiracion
             };
 
-
-
         }
-
+        [HttpPost("DarAdministrador")]
+        public async Task<ActionResult> DarAdministrador(EditarAdminDTO editarAdminDTO)
+        {
+            var user = await userManager.FindByEmailAsync(editarAdminDTO.Email);
+            await userManager.AddClaimAsync(user, new Claim("esAdmin", "1"));
+            return NoContent();
+        }
+        [HttpPost("RemoverAdministrador")]
+        public async Task<ActionResult> RemoverAdministrador(EditarAdminDTO editarAdminDTO)
+        {
+            var user = await userManager.FindByEmailAsync(editarAdminDTO.Email);
+            await userManager.RemoveClaimAsync(user, new Claim("esAdmin", "1"));
+            return NoContent();
+        }
 
     }
 }
