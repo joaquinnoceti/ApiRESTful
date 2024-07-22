@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApi.DTOs;
 
@@ -22,14 +24,52 @@ namespace WebApi.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly IConfiguration configuration;
         private readonly SignInManager<IdentityUser> signInManager;
+        private readonly IDataProtector dataProtector;
 
         public UsuariosController(UserManager<IdentityUser> userManager,
-            IConfiguration configuration, SignInManager<IdentityUser> signInManager)
+            IConfiguration configuration, SignInManager<IdentityUser> signInManager,
+            IDataProtectionProvider dataProtectionProvider)
         {
             this.userManager = userManager;
             this.configuration = configuration;
             this.signInManager = signInManager;
+            dataProtector = dataProtectionProvider.CreateProtector("valorSecreto");
         }
+
+        [HttpGet("encriptado")]
+        [AllowAnonymous]
+        public ActionResult Encriptar()
+        {
+            var textoPlano = "test1551";
+            var textoEncriptado = dataProtector.Protect(textoPlano);
+            var textoDesencriptado = dataProtector.Unprotect(textoEncriptado);
+
+            return Ok(new
+            {
+                textoPlano = textoPlano,
+                textoEncriptado = textoEncriptado,
+                textoDesencriptado = textoDesencriptado
+            });
+        }
+        [HttpGet("encriptadoPorTiempo")]
+        [AllowAnonymous]
+        public ActionResult EncriptarPorTiempo()
+        {
+            var protectorPorTiempo = dataProtector.ToTimeLimitedDataProtector();
+
+            var textoPlano = "test1551";
+            var textoEncriptado = protectorPorTiempo.Protect(textoPlano, lifetime: TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(6));
+            var textoDesencriptado = protectorPorTiempo.Unprotect(textoEncriptado);
+
+            return Ok(new
+            {
+                textoPlano = textoPlano,
+                textoEncriptado = textoEncriptado,
+                textoDesencriptado = textoDesencriptado
+            });
+        }
+
         [HttpPost("registrar")]
         public async Task<ActionResult<RespuestaAutenticacion>> Registrar(CredencialesUsuario credencialesUsuario)
         {

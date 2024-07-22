@@ -104,6 +104,8 @@ namespace WebApi
                     builder.WithOrigins("https://apirequest.io").AllowAnyHeader();
                 });
             });
+
+            services.AddDataProtection();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
