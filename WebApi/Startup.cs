@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using WebApi.Controllers;
 using WebApi.Filtros;
+using WebApi.Servicios;
 
 namespace WebApi
 {
@@ -106,6 +107,8 @@ namespace WebApi
             });
 
             services.AddDataProtection();
+
+            services.AddTransient<HashService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApi.DTOs;
+using WebApi.Servicios;
 
 namespace WebApi.Controllers
 {
@@ -24,16 +25,31 @@ namespace WebApi.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly IConfiguration configuration;
         private readonly SignInManager<IdentityUser> signInManager;
+        private readonly HashService hashService;
         private readonly IDataProtector dataProtector;
 
         public UsuariosController(UserManager<IdentityUser> userManager,
             IConfiguration configuration, SignInManager<IdentityUser> signInManager,
-            IDataProtectionProvider dataProtectionProvider)
+            IDataProtectionProvider dataProtectionProvider, HashService hashService)
         {
             this.userManager = userManager;
             this.configuration = configuration;
             this.signInManager = signInManager;
+            this.hashService = hashService;
             dataProtector = dataProtectionProvider.CreateProtector("valorSecreto");
+        }
+
+        [HttpGet("hash/{textoPlano}")]
+        public ActionResult RealizarHash(string textoPlano)
+        {
+            var resultado1= hashService.Hash(textoPlano);
+            var resultado2= hashService.Hash(textoPlano);
+            return Ok(new {
+                TextoPlano = textoPlano,
+                    Hash1 = resultado1,
+                    Hash2 = resultado2
+            });
+
         }
 
         [HttpGet("encriptado")]
