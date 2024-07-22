@@ -96,6 +96,14 @@ namespace WebApi
             {
                 opciones.AddPolicy("EsAdmin", politica => politica.RequireClaim("esAdmin"));
             });
+
+            services.AddCors(opciones =>
+            {
+                opciones.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("https://apirequest.io").AllowAnyHeader();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
@@ -134,6 +142,7 @@ namespace WebApi
 
             app.UseRouting();
 
+            app.UseCors();
 
             app.UseAuthorization();
 
