@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Entidades;
-using WebApi.Filtros;
 
 namespace WebApi.Controllers
 {

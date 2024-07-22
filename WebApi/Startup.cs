@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -23,7 +24,7 @@ namespace WebApi
     {
         public Startup(IConfiguration configuration)
         {
-
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             Configuration = configuration;
         }
 
@@ -60,7 +61,7 @@ namespace WebApi
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Name = "Authorazation",
+                    Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
