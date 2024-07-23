@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Entidades;
+using WebApi.Utilidades;
 
 namespace WebApi.Controllers
 {
@@ -32,14 +33,14 @@ namespace WebApi.Controllers
 
         [HttpGet(Name = "ObtenerAutores")]
         [AllowAnonymous]
-        public async Task<IActionResult> Get([FromQuery] bool HATEOAS=true)
+        public async Task<IActionResult> Get([FromQuery] bool incluirHATEOAS = true)
         {
             var autores = await context.Autors.ToListAsync();
             var dtos = mapper.Map<List<AutorDTO>>(autores);
-            if (HATEOAS)
+            if (incluirHATEOAS)
             {
                 var esAdmin = await authorizationService.AuthorizeAsync(User, "esAdmin");
-                dtos.ForEach(dto => GenerarEnlaces(dto, esAdmin.Succeeded));
+                // dtos.ForEach(dto => GenerarEnlaces(dto, esAdmin.Succeeded));
 
                 var result = new ColeccionDeRecursos<AutorDTO> { Valores = dtos };
                 result.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("ObtenerAutores", new { }), descripcion: "self", metodo: "GET"));
@@ -62,13 +63,13 @@ namespace WebApi.Controllers
 
         [HttpGet("{id:int}", Name = "ObtenerAutorID")]
         [AllowAnonymous]
-        public async Task<ActionResult<AutorDTOConLibros>> AutorxID(int id)
+        [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
+        public async Task<ActionResult<AutorDTOConLibros>> AutorxID(int id, [FromHeader] string incluirHATEOAS)
         {
             var autor = await context.Autors
                 .Include(autorDB => autorDB.AutoresLibros)
                 .ThenInclude(autorlibroDB => autorlibroDB.Libro)
                 .FirstOrDefaultAsync(autorDB => autorDB.ID == id);
-            var esAdmin = await authorizationService.AuthorizeAsync(User, "esAdmin");
 
 
             if (autor == null)
@@ -76,24 +77,10 @@ namespace WebApi.Controllers
                 return NotFound();
             }
             var dto = mapper.Map<AutorDTOConLibros>(autor);
-
-            GenerarEnlaces(dto, esAdmin.Succeeded);
-
             return dto;
         }
 
-        private void GenerarEnlaces(AutorDTO autorDTO, bool esAdmin)
-        {
-            autorDTO.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("ObtenerAutorID", new { ID = autorDTO.ID }), descripcion: "self", metodo: "GET"));
-            if (esAdmin)
-            {
-                autorDTO.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("ActualizarAutor", new { ID = autorDTO.ID }), descripcion: "autor-actualizar", metodo: "PUT"));
 
-                autorDTO.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("EliminarAutor", new { ID = autorDTO.ID }), descripcion: "autor-eliminar", metodo: "DELETE"));
-
-            }
-
-        }
 
 
         [HttpPost(Name = "CrearAutor")]

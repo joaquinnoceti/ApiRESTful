@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ using System.Text.Json.Serialization;
 using WebApi.Controllers;
 using WebApi.Filtros;
 using WebApi.Servicios;
+using WebApi.Utilidades;
 
 namespace WebApi
 {
@@ -109,6 +111,10 @@ namespace WebApi
             services.AddDataProtection();
 
             services.AddTransient<HashService>();
+
+            services.AddTransient<GeneradorLinks>();
+            services.AddTransient<HATEOASAutorFilterAttribute>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
