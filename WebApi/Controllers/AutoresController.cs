@@ -33,23 +33,12 @@ namespace WebApi.Controllers
 
         [HttpGet(Name = "ObtenerAutores")]
         [AllowAnonymous]
-        public async Task<IActionResult> Get([FromQuery] bool incluirHATEOAS = true)
+        [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
+        public async Task<ActionResult<List<AutorDTO>>> Get([FromHeader] string incluirHATEOAS)
         {
             var autores = await context.Autors.ToListAsync();
-            var dtos = mapper.Map<List<AutorDTO>>(autores);
-            if (incluirHATEOAS)
-            {
-                var esAdmin = await authorizationService.AuthorizeAsync(User, "esAdmin");
-                // dtos.ForEach(dto => GenerarEnlaces(dto, esAdmin.Succeeded));
-
-                var result = new ColeccionDeRecursos<AutorDTO> { Valores = dtos };
-                result.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("ObtenerAutores", new { }), descripcion: "self", metodo: "GET"));
-                if (esAdmin.Succeeded)
-                    result.Enlaces.Add(new DatoHATEOAS(enlace: Url.Link("CrearAutor", new { }), descripcion: "crear-autor", metodo: "POST"));
-                return Ok(result);
-            }
-
-            return Ok(dtos);
+            return mapper.Map<List<AutorDTO>>(autores);
+                      
         }
 
         [HttpGet("{nombre}", Name = "ObtenerAutorNombre")]
