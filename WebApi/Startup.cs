@@ -62,6 +62,8 @@ namespace WebApi
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
+                c.OperationFilter<ParametroHATEOAS>();
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
