@@ -154,8 +154,8 @@ namespace WebApi
 
                 app.UseSwagger();
                 app.UseSwaggerUI(c => {
-                    c.SwaggerEndpoint("swagger/v1/swagger.json", "WebAPIAutoresv1");
-                    c.SwaggerEndpoint("swagger/v2/swagger.json", "WebAPIAutoresv2");
+                    c.SwaggerEndpoint("swagger/v1/swagger.json", "WebAPIV1");
+                    c.SwaggerEndpoint("swagger/v2/swagger.json", "WebAPIV2");
                 });
             }
 
