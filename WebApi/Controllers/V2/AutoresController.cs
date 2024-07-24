@@ -11,10 +11,10 @@ using WebApi.DTOs;
 using WebApi.Entidades;
 using WebApi.Utilidades;
 
-namespace WebApi.Controllers
+namespace WebApi.Controllers.V2
 {
     [ApiController]
-    [Route("api/autores")]
+    [Route("api/V2/autores")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class AutoresController : ControllerBase
     {
@@ -31,26 +31,27 @@ namespace WebApi.Controllers
 
 
 
-        [HttpGet(Name = "ObtenerAutores")]
+        [HttpGet(Name = "ObtenerAutoresV2")]
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
         public async Task<ActionResult<List<AutorDTO>>> Get()
         {
             var autores = await context.Autors.ToListAsync();
+            autores.ForEach(x => x.Nombre = x.Nombre.ToUpper());
             return mapper.Map<List<AutorDTO>>(autores);
                       
         }
 
-        [HttpGet("{nombre}", Name = "ObtenerAutorNombre")]
+        [HttpGet("{nombre}", Name = "ObtenerAutorNombreV2")]
         public async Task<ActionResult<List<AutorDTO>>> AutorxID(string nombre)
         {
             var autores = await context.Autors.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
-
+            autores.ForEach(x => x.Nombre = x.Nombre.ToUpper());
             return mapper.Map<List<AutorDTO>>(autores);
         }
 
 
-        [HttpGet("{id:int}", Name = "ObtenerAutorID")]
+        [HttpGet("{id:int}", Name = "ObtenerAutorIDV2")]
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
         public async Task<ActionResult<AutorDTOConLibros>> AutorxID(int id)
@@ -65,6 +66,8 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
+            autor.Nombre.ToUpper();
+
             var dto = mapper.Map<AutorDTOConLibros>(autor);
             return dto;
         }
@@ -72,7 +75,7 @@ namespace WebApi.Controllers
 
 
 
-        [HttpPost(Name = "CrearAutor")]
+        [HttpPost(Name = "CrearAutorV2")]
         public async Task<ActionResult> Post([FromBody] AutorAltaDTO autorDTO)
         {
             var ExisteNombre = await context.Autors.AnyAsync(x => x.Nombre == autorDTO.Nombre);
@@ -89,11 +92,11 @@ namespace WebApi.Controllers
 
             var AutorDTO = mapper.Map<AutorDTO>(autor);
 
-            return CreatedAtRoute("ObtenerAutor", new { id = autor.ID }, AutorDTO);
+            return CreatedAtRoute("ObtenerAutorV2", new { id = autor.ID }, AutorDTO);
 
         }
 
-        [HttpPut("{id:int}", Name = "ActualizarAutor")]//api/autores/1(id)
+        [HttpPut("{id:int}", Name = "ActualizarAutorV2")]//api/autores/1(id)
         public async Task<ActionResult> Put(AutorAltaDTO autorDTO, int id)
         {
 
@@ -113,7 +116,7 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:int}", Name = "EliminarAutor")]
+        [HttpDelete("{id:int}", Name = "EliminarAutorV2")]
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await context.Autors.AnyAsync(x => x.ID == id);

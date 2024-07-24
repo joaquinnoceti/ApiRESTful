@@ -38,6 +38,7 @@ namespace WebApi
             services.AddControllers(opciones =>
             {
                 opciones.Filters.Add(typeof(FiltroDeExcepcion));
+                opciones.Conventions.Add(new VersionadoSwagger());
             }).AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();
 
@@ -62,7 +63,10 @@ namespace WebApi
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
-                c.OperationFilter<ParametroHATEOAS>();
+            c.SwaggerDoc("V1", new OpenApiInfo{ Title = "WebApi", Version = "V1" });
+            c.SwaggerDoc("V2", new OpenApiInfo{ Title = "WebApi", Version = "V2" });
+
+            c.OperationFilter<ParametroHATEOAS>();
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -147,8 +151,12 @@ namespace WebApi
 
             if (env.IsDevelopment())
             {
+
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c => {
+                    c.SwaggerEndpoint("swagger/v1/swagger.json", "WebAPIAutoresv1");
+                    c.SwaggerEndpoint("swagger/v2/swagger.json", "WebAPIAutoresv2");
+                });
             }
 
             app.UseHttpsRedirection();

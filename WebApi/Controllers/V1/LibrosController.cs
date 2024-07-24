@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Entidades;
 
-namespace WebApi.Controllers
+namespace WebApi.Controllers.V1
 {
     [ApiController]
-    [Route("api/libros")]
+    [Route("api/V1/libros")]
     public class LibrosController : ControllerBase
     {
         private readonly ApplicationDbContext context;
