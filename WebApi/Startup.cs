@@ -37,8 +37,8 @@ namespace WebApi
         {
             services.AddControllers(opciones =>
             {
-                opciones.Filters.Add(typeof(FiltroDeExcepcion));
                 opciones.Conventions.Add(new VersionadoSwagger());
+                opciones.Filters.Add(typeof(FiltroDeExcepcion));
             }).AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();
 
@@ -63,11 +63,11 @@ namespace WebApi
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
-            c.SwaggerDoc("V1", new OpenApiInfo{ Title = "WebApi", Version = "V1" });
-            c.SwaggerDoc("V2", new OpenApiInfo{ Title = "WebApi", Version = "V2" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "WebApi", Version = "v2" });
 
-            c.OperationFilter<ParametroHATEOAS>();
-
+                c.OperationFilter<ParametroHATEOAS>();
+                c.OperationFilter<ParametroDeVersion>();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -153,9 +153,10 @@ namespace WebApi
             {
 
                 app.UseSwagger();
-                app.UseSwaggerUI(c => {
-                    c.SwaggerEndpoint("swagger/v1/swagger.json", "WebAPIV1");
-                    c.SwaggerEndpoint("swagger/v2/swagger.json", "WebAPIV2");
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiv1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "WebApiv2");
                 });
             }
 

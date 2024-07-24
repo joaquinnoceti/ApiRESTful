@@ -16,10 +16,10 @@ using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Servicios;
 
-namespace WebApi.Controllers.V1
+namespace WebApi.Controllers.v1
 {
     [ApiController]
-    [Route("api/V1/cuentas")]
+    [Route("api/v1/cuentas")]
     public class UsuariosController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;

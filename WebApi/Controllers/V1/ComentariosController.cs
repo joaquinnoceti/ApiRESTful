@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Entidades;
 
-namespace WebApi.Controllers.V1
+namespace WebApi.Controllers.v1
 {
     [ApiController]
-    [Route("api/V1/libros/{LibroID:int}/comentarios")]
+    [Route("api/v1/libros/{LibroID:int}/comentarios")]
     public class ComentariosController : ControllerBase
     {
         private readonly ApplicationDbContext context;

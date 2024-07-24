@@ -7,8 +7,8 @@ namespace WebApi.Utilidades
     {
         public void Apply(ControllerModel controller)
         {
-            var namespaceController = controller.ControllerType.Namespace; // controllers.V1
-            var versionAPI = namespaceController.Split(".").Last().ToUpper(); //V1
+            var namespaceController = controller.ControllerType.Namespace; // controllers.v1
+            var versionAPI = namespaceController.Split(".").Last().ToLower(); //v1
             controller.ApiExplorer.GroupName = versionAPI;
         }
     }

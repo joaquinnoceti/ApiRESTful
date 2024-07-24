@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApi.DTOs;
 
-namespace WebApi.Controllers.V1
+namespace WebApi.Controllers.v1
 {
     [ApiController]
-    [Route("api/V1")]
+    [Route("api/v1")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RootController : ControllerBase
     {
