@@ -44,6 +44,7 @@ namespace WebApi.Controllers.v1
         }
 
         [HttpGet("{nombre}", Name = "ObtenerAutorNombrev1")]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<List<AutorDTO>>> AutorxID(string nombre)
         {
             var autores = await context.Autors.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
@@ -55,6 +56,7 @@ namespace WebApi.Controllers.v1
         [HttpGet("{id:int}", Name = "ObtenerAutorIDv1")]
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<AutorDTOConLibros>> AutorxID(int id)
         {
             var autor = await context.Autors
@@ -73,7 +75,11 @@ namespace WebApi.Controllers.v1
 
 
 
-
+        /// <summary>
+        /// Alta de autor
+        /// </summary>
+        /// <param name="autorDTO">Da de alta un Autor, realizando validaciones basicas.</param>
+        /// <returns></returns>
         [HttpPost(Name = "CrearAutorv1")]
         public async Task<ActionResult> Post([FromBody] AutorAltaDTO autorDTO)
         {
@@ -96,6 +102,7 @@ namespace WebApi.Controllers.v1
         }
 
         [HttpPut("{id:int}", Name = "ActualizarAutorv1")]//api/autores/1(id)
+        [ProducesResponseType(404)]
         public async Task<ActionResult> Put(AutorAltaDTO autorDTO, int id)
         {
 
@@ -116,6 +123,7 @@ namespace WebApi.Controllers.v1
         }
 
         [HttpDelete("{id:int}", Name = "EliminarAutorv1")]
+        [ProducesResponseType(404)]
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await context.Autors.AnyAsync(x => x.ID == id);

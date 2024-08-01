@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using WebApi.Controllers;
@@ -63,7 +64,19 @@ namespace WebApi
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "WebApi",
+                    Version = "v1",
+                    Description = "Api gestion libreria.",
+                    Contact = new OpenApiContact
+                    {
+                        Email = "PRUEBA@gmail.com",
+                        Name = "Tarugo el Tortugo",
+                        Url = new Uri("https://github.com/joaquinnoceti.com")
+                    }
+                });
+
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "WebApi", Version = "v2" });
 
                 c.OperationFilter<ParametroHATEOAS>();
@@ -92,6 +105,9 @@ namespace WebApi
                         new string[]{}
                     }
                 });
+                var archivoXML = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var rutaXML = Path.Combine(AppContext.BaseDirectory, archivoXML);
+                c.IncludeXmlComments(rutaXML);
             });
 
             services.AddAutoMapper(typeof(Startup));
