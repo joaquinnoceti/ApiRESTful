@@ -126,7 +126,8 @@ namespace WebApi
             {
                 opciones.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("https://apirequest.io").AllowAnyHeader();
+                    builder.WithOrigins("https://apirequest.io").AllowAnyHeader()
+                    .AllowAnyMethod().AllowAnyHeader().WithExposedHeaders(new string [] { "maxRegistros" });
                 });
             });
 

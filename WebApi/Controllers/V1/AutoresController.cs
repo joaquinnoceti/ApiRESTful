@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Entidades;
 using WebApi.Utilidades;
+using WebApi.Servicios;
 
 namespace WebApi.Controllers.v1
 {
@@ -36,9 +37,11 @@ namespace WebApi.Controllers.v1
         [HttpGet(Name = "ObtenerAutoresv1")]
         [AllowAnonymous]
         [ServiceFilter(typeof(HATEOASAutorFilterAttribute))]
-        public async Task<ActionResult<List<AutorDTO>>> Get()
+        public async Task<ActionResult<List<AutorDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
-            var autores = await context.Autors.ToListAsync();
+            var query = context.Autors.AsQueryable();
+            await HttpContext.ParametroPaginacionHeader(query);
+            var autores = await query.OrderBy(autor => autor.Nombre).Paginar(paginacionDTO).ToListAsync();
             return mapper.Map<List<AutorDTO>>(autores);
                       
         }
